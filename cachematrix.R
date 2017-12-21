@@ -14,7 +14,7 @@ makeCacheMatrix <- function(x = matrix()) {
         set <- function(z) {
                 
                 x <<- z
-                inv <<- NULL # inv is restarted when the function is called again
+                inv <<- NULL
         }
         
         get <- function() x
@@ -26,10 +26,6 @@ makeCacheMatrix <- function(x = matrix()) {
         list(set = set, get = get, 
              set_inverse = set_inverse, 
              get_inverse = get_inverse) 
-        
-        # Must make a list to access the functions. 
-        # Must name the function so you can call them with $
-
 }
 
 
@@ -46,34 +42,11 @@ cacheSolve <- function(x, ...) {
                 return(inv)
         }
         
-        inv <- solve(x, ...)
+        matrix_to_solve <- x$get()
         
-        x$set_inverse(x) #cache the inverse matrix
+        inv <- solve(matrix_to_solve, ...)
+        
+        x$set_inverse(inv)
         
         inv
-        ## Return a matrix that is the inverse of 'x'
 }
-
-###Tests:
-
-invertible_matrix <- matrix(c(2, 2, 3, 2), 2, 2)
-
-invertible_matrix
-
-solve(invertible_matrix)
-
-my_matrix_1 <- makeCacheMatrix(invertible_matrix)
-
-my_matrix_1$get()
-
-my_matrix_1$get_inverse()
-
-my_matrix_1$set(1)
-
-my_matrix_1$get()
-
-my_matrix_1$set(invertible_matrix)
-
-my_matrix_1$get()
-
-cacheSolve(my_matrix_1)
